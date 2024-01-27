@@ -1,9 +1,11 @@
 #include <fstream>
-#include <iterator>
-#include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "include/shader.h"
 #include "include/logging.h"
+
+
+// ----------------------------------- Macros ---------------------------------
+#define TO_RADIANS(x) (float)(x * 3.14159265f/180.0)
 
 // ---------------------------------- Shader ----------------------------------
 
@@ -73,7 +75,7 @@ ShaderProgram* ShaderProgram::compile_shaders(void){
   return this;
 }
 
-ShaderProgram::ShaderProgram():m_shaders(),compiled_and_linked(false),m_model(glm::mat4(1.0f)){
+ShaderProgram::ShaderProgram():m_shaders(),compiled_and_linked(false),m_model(glm::mat4(1.0f)),m_projection(glm::mat4(1.0f)){
   this->m_id = glCreateProgram();
 }
 
@@ -86,6 +88,8 @@ void ShaderProgram::use(void){
   GLCALL(glUseProgram(this->m_id));
   //update model
   GLCALL(glUniformMatrix4fv(this->get_model(),1,GL_FALSE,glm::value_ptr(this->m_model)));
+  //update projection
+  GLCALL(glUniformMatrix4fv(this->get_projection(),1,GL_FALSE,glm::value_ptr(this->m_projection)));
 }
 
 ShaderProgram* ShaderProgram::scale(float x, float y, float z) {
@@ -98,8 +102,15 @@ ShaderProgram* ShaderProgram::translate(float x, float y, float z) {
   return this;
 }
 
+ShaderProgram* ShaderProgram::rotate(float degree, glm::vec3 axis) {
+  this->m_model = glm::rotate(this->m_model,TO_RADIANS(degree),axis);
+  return this;
+}
 ShaderProgram* ShaderProgram::reset_model(){
   this->m_model = glm::mat4(1.0f);
   return this;
 }
 
+void ShaderProgram::set_perspective(float field_of_view_y, float screen_ratio,float near_view,float far_view){
+  this->m_projection = glm::perspective(field_of_view_y,screen_ratio,near_view,far_view);
+}

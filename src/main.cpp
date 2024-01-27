@@ -8,13 +8,17 @@
 #include "include/logging.h"
 
 float vertices[] = {
-  -0.5f,-0.5f,0.0f,
-  0.5f,-0.5f,0.0f,
-  0.0f,0.5f,0.0f,
+  -1, -1, 0,
+   1, -1, 0,
+   0,  1, 0,
+   0,  0, 1.5,
 };
 
 unsigned int indices[] = {
-  0,1,2
+  0, 1, 2,
+  0, 1, 3,
+  1, 2, 3,
+  0, 2, 3,
 };
 
 
@@ -34,20 +38,23 @@ int main() {
     Mesh* mesh = new Mesh();
     mesh->create(vertices,indices,sizeof(vertices),sizeof(indices));
   
-    float move_x = 0.2f;
-    float inc = 0.01;
+    float angle = 0.0f;
+    float inc = 1;
 
     while (!main_window->should_close())
     {
       Renderer::clear();
       Renderer::draw(*mesh,*program);
       /* Swap front and back buffers */
-      if(move_x >=0.8 || move_x <= -0.8) inc = -inc;
-      move_x += inc;
+      if( angle >= 360) angle = 0;
+      angle+=inc;
+      program->set_perspective(45.0f,main_window->get_ratio(),0.1f,100.0f);
       program
         ->reset_model()
-        ->translate(move_x,move_x, 0.0f)
-        ->scale(0.5f,0.5f,0.0f);
+        ->translate(0.0f,0.0f,-7.5f)
+        ->rotate(angle,glm::vec3(1.0f,1.0f,0.4f))
+        ->scale(2,2,2);
+      ;
 
       main_window->swap_buffers();
       /* Poll for and process events */
@@ -59,6 +66,6 @@ int main() {
   delete fs;
   delete program;
   delete mesh;
-  LOG_DEBUG("quiting..");
+  LOG_DEBUG("quiting");
   return 0;
 }

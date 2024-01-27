@@ -1,5 +1,5 @@
 #include "include/window.h"
-#include <GLFW/glfw3.h>
+#include "include/logging.h"
 
 #define DEFAULT_WIDTH 800
 #define DEFAULT_HEIGHT 600
@@ -46,9 +46,10 @@ int Window::init() {
     glfwTerminate();
     return 1;
   }
-  // glEnable(GL_DEPTH_TEST);
-  // //create viewport
-  // glViewport(0,0,this->m_width_buffer,m_height_buffer);
+  GLCALL(glEnable(GL_DEPTH_TEST));
+  //create viewport
+  GLCALL(glViewport(0,0,this->m_width_buffer,m_height_buffer));
+
   return 0;
 }
 

@@ -1,12 +1,12 @@
 #version 330
-
 layout (location = 0) in vec3 pos;
 
 out vec4 vCol;
-
+uniform mat4 u_model;
+uniform mat4 u_projection;
 
 void main()
 {
-	gl_Position = vec4(pos, 1.0);
+	gl_Position =  u_projection * u_model * vec4(pos, 1.0);
 	vCol = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);
 }

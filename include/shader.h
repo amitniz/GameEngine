@@ -86,10 +86,15 @@ public:
    * @return the model uniform
    */
   inline int get_model() const{ return glGetUniformLocation(this->m_id, "u_model"); }
-
+  inline int get_projection() const{ return glGetUniformLocation(this->m_id, "u_projection"); }
+  
+  //model manipulations
   ShaderProgram* reset_model();
   ShaderProgram* scale(float x, float y, float z);
   ShaderProgram* translate(float x, float y, float z);
+  ShaderProgram* rotate(float degree, glm::vec3 axis);
+
+  void set_perspective(float field_of_view_y, float screen_ratio,float near_view,float far_view);
 
 private:
   ShaderProgram* link_shaders(void);
@@ -98,6 +103,6 @@ private:
   unsigned int m_id;
   std::vector<Shader*> m_shaders;  
   bool compiled_and_linked;
-  glm::mat4 m_model;
+  glm::mat4 m_model, m_projection;
 };
 
