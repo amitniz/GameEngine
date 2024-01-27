@@ -1,8 +1,9 @@
-#include <GL/glew.h>
 #include <fstream>
 #include <iterator>
-
+#include <GL/glew.h>
+#include <glm/gtc/type_ptr.hpp>
 #include "include/shader.h"
+#include "include/logging.h"
 
 // ---------------------------------- Shader ----------------------------------
 
@@ -16,24 +17,23 @@ void Shader::compile(void){
   const GLchar* shader_code[1] = {this->m_code.c_str()};
   GLint size[1] = {(GLint) this->m_code.length()};
   //add source code
-  glShaderSource(this->m_id,1,shader_code,size);
+  GLCALL(glShaderSource(this->m_id,1,shader_code,size));
   //compile shader
-  glCompileShader(this->m_id);
+  GLCALL(glCompileShader(this->m_id));
   GLint res = 0;
   GLchar info_log[1024] = {0};
 
   //get compilation results
-  glGetShaderiv(this->m_id,GL_COMPILE_STATUS, &res);
+  GLCALL(glGetShaderiv(this->m_id,GL_COMPILE_STATUS, &res));
   if(!res){
-    glGetShaderInfoLog(this->m_id,sizeof(info_log),nullptr, info_log);
+    GLCALL(glGetShaderInfoLog(this->m_id,sizeof(info_log),nullptr, info_log));
     printf("error compiling the %d shader: '%s'\n",this->m_id,info_log);
     return;
   }
-  printf("compiled shader %u\n",this->m_id);
 }
 
 Shader::~Shader(){
-  if(this->m_id) glDeleteShader(this->m_id);
+  if(this->m_id) GLCALL(glDeleteShader(this->m_id));
 }
 
 Shader* Shader::from_file(const std::string& path){
@@ -58,11 +58,10 @@ ShaderProgram* ShaderProgram::add_shader(Shader* shader){
 
 ShaderProgram* ShaderProgram::link_shaders(void){
   for (Shader* shader : this->m_shaders){
-    glAttachShader(this->m_id, shader->id());
+    GLCALL(glAttachShader(this->m_id, shader->id()));
   }
-  glLinkProgram(this->m_id);
-  glValidateProgram(this->m_id);
-  //TODO: add error handling
+  GLCALL(glLinkProgram(this->m_id));
+  GLCALL(glValidateProgram(this->m_id));
   return this;
 }
 
@@ -74,13 +73,33 @@ ShaderProgram* ShaderProgram::compile_shaders(void){
   return this;
 }
 
-ShaderProgram::ShaderProgram():m_shaders(){
+ShaderProgram::ShaderProgram():m_shaders(),compiled_and_linked(false),m_model(glm::mat4(1.0f)){
   this->m_id = glCreateProgram();
 }
 
 void ShaderProgram::use(void){
-  this->compile_shaders();
-  this->link_shaders();
-  glUseProgram(this->m_id);
+  if(!this->compiled_and_linked){
+    this->compile_shaders();
+    this->link_shaders();
+    this->compiled_and_linked = true;
+  }
+  GLCALL(glUseProgram(this->m_id));
+  //update model
+  GLCALL(glUniformMatrix4fv(this->get_model(),1,GL_FALSE,glm::value_ptr(this->m_model)));
+}
+
+ShaderProgram* ShaderProgram::scale(float x, float y, float z) {
+  this->m_model = glm::scale(this->m_model,glm::vec3(x,y,z));
+  return this;
+}
+
+ShaderProgram* ShaderProgram::translate(float x, float y, float z) {
+  this->m_model = glm::translate(this->m_model,glm::vec3(x,y,z));
+  return this;
+}
+
+ShaderProgram* ShaderProgram::reset_model(){
+  this->m_model = glm::mat4(1.0f);
+  return this;
 }
 

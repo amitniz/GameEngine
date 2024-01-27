@@ -1,34 +1,11 @@
+#include <string>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <string>
 #include "include/mesh.h"
 #include "include/window.h"
 #include "include/shader.h"
 #include "include/renderer.h"
-static unsigned int compile_shader(const std::string &source, GLenum type) {
-  GLuint shader = glCreateShader(type);
-  const char *src = source.c_str();
-  glShaderSource(shader, 1, &src, nullptr);
-  glCompileShader(shader);
-
-  return shader;
-}
-
-static unsigned int create_shader(const std::string &vertex_shader,
-                                  const std::string &fragment_shader) {
-  GLuint program = glCreateProgram();
-  GLuint vs = compile_shader(vertex_shader, GL_VERTEX_SHADER);
-  GLuint fs = compile_shader(fragment_shader, GL_FRAGMENT_SHADER);
-
-  glAttachShader(program, vs);
-  glAttachShader(program, fs);
-  glLinkProgram(program);
-  glValidateProgram(program);
-
-  glDeleteShader(vs);
-  glDeleteShader(fs);
-  return program;
-}
+#include "include/logging.h"
 
 float vertices[] = {
   -0.5f,-0.5f,0.0f,
@@ -42,8 +19,8 @@ unsigned int indices[] = {
 
 
 int main() {
-
-    Window * main_window = new Window();
+    LOG_DEBUG("start engine");
+    Window * main_window = new Window(1280,1280);
     main_window->init();
 
     VertexShader* vs = new VertexShader();
@@ -56,21 +33,32 @@ int main() {
     program->add_shader(fs);
     Mesh* mesh = new Mesh();
     mesh->create(vertices,indices,sizeof(vertices),sizeof(indices));
-     
+  
+    float move_x = 0.2f;
+    float inc = 0.01;
+
     while (!main_window->should_close())
     {
-        Renderer::clear();
-        Renderer::draw(*mesh,*program);
-        /* Swap front and back buffers */
-        main_window->swap_buffers();
+      Renderer::clear();
+      Renderer::draw(*mesh,*program);
+      /* Swap front and back buffers */
+      if(move_x >=0.8 || move_x <= -0.8) inc = -inc;
+      move_x += inc;
+      program
+        ->reset_model()
+        ->translate(move_x,move_x, 0.0f)
+        ->scale(0.5f,0.5f,0.0f);
 
-        /* Poll for and process events */
-        glfwPollEvents();
+      main_window->swap_buffers();
+      /* Poll for and process events */
+      glfwPollEvents();
     }
-
+  
+  // clean up
   delete vs;
   delete fs;
   delete program;
   delete mesh;
+  LOG_DEBUG("quiting..");
   return 0;
 }

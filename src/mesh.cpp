@@ -1,4 +1,5 @@
 #include "include/mesh.h"
+#include "include/logging.h"
 
 Mesh::Mesh() {
   m_vbo = 0;
@@ -13,28 +14,28 @@ Mesh* Mesh::create(GLfloat *vertices, unsigned *indices,
   this->m_idx_count = n_indices;
 
   // vao
-  glGenVertexArrays(1, &this->m_vao);
-  glBindVertexArray(this->m_vao);
+  GLCALL(glGenVertexArrays(1, &this->m_vao));
+  GLCALL(glBindVertexArray(this->m_vao));
   // ibo
-  glGenBuffers(1, &this->m_ibo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->m_ibo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * n_indices, indices,
-               GL_STATIC_DRAW);
+  GLCALL(glGenBuffers(1, &this->m_ibo));
+  GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->m_ibo));
+  GLCALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * n_indices, indices,
+               GL_STATIC_DRAW));
   // vbo
-  glGenBuffers(1, &this->m_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, this->m_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * n_vertices,
-               vertices, GL_STATIC_DRAW);
+  GLCALL(glGenBuffers(1, &this->m_vbo));
+  GLCALL(glBindBuffer(GL_ARRAY_BUFFER, this->m_vbo));
+  GLCALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * n_vertices,
+               vertices, GL_STATIC_DRAW));
 
   // attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(0);
+  GLCALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0));
+  GLCALL(glEnableVertexAttribArray(0));
 
   //unbinds
-  glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind vbo
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); //unbind ibo
+  GLCALL(glBindBuffer(GL_ARRAY_BUFFER, 0)); //unbind vbo
+  GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)); //unbind ibo
 
-  glBindVertexArray(0); // unbind vao
+  GLCALL(glBindVertexArray(0)); // unbind vao
 
   return this;
 }
@@ -43,15 +44,15 @@ Mesh* Mesh::create(GLfloat *vertices, unsigned *indices,
 void Mesh::clear(){
 
   if(!this->m_ibo){
-    glDeleteBuffers(1,&this->m_ibo);
+    GLCALL(glDeleteBuffers(1,&this->m_ibo));
     this->m_ibo = 0;
   }
   if(!this->m_vbo){
-    glDeleteBuffers(1,&this->m_vbo);
+    GLCALL(glDeleteBuffers(1,&this->m_vbo));
     this->m_vbo = 0;
   }
   if(!this->m_vao){
-    glDeleteVertexArrays(1,&this->m_vao);
+    GLCALL(glDeleteVertexArrays(1,&this->m_vao));
     this->m_vao = 0;
   }
   this->m_idx_count = 0;
@@ -59,15 +60,15 @@ void Mesh::clear(){
 
 void Mesh::render(){
   //bind vao
-  glBindVertexArray(this->m_vao);
+  GLCALL(glBindVertexArray(this->m_vao));
   //bind ibo
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,this->m_ibo);
+  GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,this->m_ibo));
   //draw mesh
-  glDrawElements(GL_TRIANGLES,this->m_idx_count,GL_UNSIGNED_INT,0);
+  GLCALL(glDrawElements(GL_TRIANGLES,this->m_idx_count,GL_UNSIGNED_INT,0));
   //unbind ibo
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+  GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0));
   //unbind vao
-  glBindVertexArray(0);
+  GLCALL(glBindVertexArray(0));
   
 }
 
