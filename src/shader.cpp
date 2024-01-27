@@ -29,7 +29,7 @@ void Shader::compile(void){
   GLCALL(glGetShaderiv(this->m_id,GL_COMPILE_STATUS, &res));
   if(!res){
     GLCALL(glGetShaderInfoLog(this->m_id,sizeof(info_log),nullptr, info_log));
-    printf("error compiling the %d shader: '%s'\n",this->m_id,info_log);
+    LOG_ERROR("error compiling the %d shader: '%s'\n",this->m_id,info_log);
     return;
   }
 }
@@ -46,7 +46,7 @@ Shader* Shader::from_file(const std::string& path){
   }
   else{
     //handle errors
-    printf("failed to open %s\n",path.c_str());
+    LOG_ERROR("failed to open %s\n",path.c_str());
   }
   return this;
 }
@@ -75,21 +75,18 @@ ShaderProgram* ShaderProgram::compile_shaders(void){
   return this;
 }
 
-ShaderProgram::ShaderProgram():m_shaders(),compiled_and_linked(false),m_model(glm::mat4(1.0f)),m_projection(glm::mat4(1.0f)){
+ShaderProgram::ShaderProgram():m_shaders(),compiled_and_linked(false),m_model(glm::mat4(1.0f)),m_projection(glm::mat4(1.0f)),m_view(glm::mat4(1.0f)){
   this->m_id = glCreateProgram();
 }
 
 void ShaderProgram::use(void){
-  if(!this->compiled_and_linked){
-    this->compile_shaders();
-    this->link_shaders();
+    if(!this->compiled_and_linked){
+    compile_shaders();
+    link_shaders();
     this->compiled_and_linked = true;
-  }
-  GLCALL(glUseProgram(this->m_id));
-  //update model
-  GLCALL(glUniformMatrix4fv(this->get_model(),1,GL_FALSE,glm::value_ptr(this->m_model)));
-  //update projection
-  GLCALL(glUniformMatrix4fv(this->get_projection(),1,GL_FALSE,glm::value_ptr(this->m_projection)));
+    }
+    GLCALL(glUseProgram(this->m_id));
+    update_uniforms();
 }
 
 ShaderProgram* ShaderProgram::scale(float x, float y, float z) {
@@ -113,4 +110,13 @@ ShaderProgram* ShaderProgram::reset_model(){
 
 void ShaderProgram::set_perspective(float field_of_view_y, float screen_ratio,float near_view,float far_view){
   this->m_projection = glm::perspective(field_of_view_y,screen_ratio,near_view,far_view);
+}
+
+void ShaderProgram::update_uniforms() const{
+    //update model
+    GLCALL(glUniformMatrix4fv(this->get_model(),1,GL_FALSE,glm::value_ptr(this->m_model)));
+    //update projection
+    GLCALL(glUniformMatrix4fv(this->get_projection(),1,GL_FALSE,glm::value_ptr(this->m_projection)));
+    //update view
+    GLCALL(glUniformMatrix4fv(this->get_view(),1,GL_FALSE,glm::value_ptr(this->m_view)));
 }
