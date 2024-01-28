@@ -6,13 +6,14 @@ CXX = g++
 HEADERS_DIR = ./include
 SRC_DIR = ./src
 OBJ_DIR = ./build
+LIB_DIR = ./lib
 
 # Source/Object files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
 # Compiler flags
-CXXFLAGS = -Wall -Wextra -I. -Llib -std=c++17 -lGL -lglfw -lGLEW 
+CXXFLAGS = -Wall -Wextra -I. -L$(LIB_DIR) -std=c++17 -lGL -lglfw -lGLEW -lassimp
 
 # Executable
 TARGET = GameEngine
@@ -36,4 +37,8 @@ $(OBJ_DIR):
 clean:
 	rm -rf $(OBJ_DIR) $(TARGET)
 
-.PHONY: all clean
+run:
+	make clean; make 
+	clear;
+	./$(TARGET)
+.PHONY: all clean run

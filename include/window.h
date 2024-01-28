@@ -10,10 +10,12 @@ class Window {
 
 public:
   Window();
+  ~Window();
   Window(int width, int height);
 
   int init();
 
+  inline void poll_events() const { glfwPollEvents(); }
   inline int get_width_buffer() const { return this->m_width_buffer; }
   inline int get_height_buffer() const { return this->m_height_buffer; }
   inline float get_ratio() const {
@@ -26,7 +28,6 @@ public:
   inline void swap_buffers() const { glfwSwapBuffers(this->m_window); }
   inline const bool *get_keys_state() const { return this->m_keys; }
   inline const int *get_mouse_changes() const { return this->mouse_changes; }
-  ~Window();
 
 private:
   void set_callbacks();
@@ -43,5 +44,6 @@ private:
   // mouse
   int current_coords[2];
   int mouse_changes[2];
+  int last_coords[2];
   bool mouse_init; // prevents inital read before user moved the mouse
 };

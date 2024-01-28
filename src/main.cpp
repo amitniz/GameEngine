@@ -1,27 +1,49 @@
 #include "include/camera.h"
 #include "include/logging.h"
 #include "include/mesh.h"
+#include "include/model.h"
 #include "include/renderer.h"
 #include "include/shader.h"
+#include "include/texture.h"
 #include "include/window.h"
 #include <GLFW/glfw3.h>
+#include <assimp/Importer.hpp>
 
 float vertices[] = {
-    -1, -1, 0,
-     1, -1, 0,
-     0, 1, 0.5,
-     0, -1, 1.5,
+//   x  y   z  u  v
+    -1, 0, -1, 0, 0, // bottom left - 0
+    1,  0, -1, 0.3333, 0, // bottom right - 1
+    -1, 0, 1,  1, 0, // upper left   - 2
+    1,  0, 1,  0.6666, 0, // upper right   - 3
+    0,  2, 0,  0.5,1, // top          - 4
 };
 
 unsigned int indices[] = {
-    0, 1, 2, 0, 1, 3, 1, 2, 3, 0, 2, 3,
+    0, 1, 2,
+    1, 2, 3,
+    0, 1, 4,
+    2, 3, 4,
+    0, 2, 4,
+    1, 3, 4,
 };
 
 int main() {
   LOG_DEBUG("starting the engine..");
-  Window *main_window = new Window(860, 860);
+  // create window
+  Window *main_window = new Window(1200, 1200);
   main_window->init();
 
+  // create Mesh
+  Mesh *mesh = new Mesh();
+  mesh->create(vertices, indices, sizeof(vertices), sizeof(indices));
+  // create texture
+  Texture *brick_texture = new Texture("assets/textures/red_brick.png");
+  brick_texture->load();
+
+  // create model
+  // Model *model = new Model();
+  // model->load("models/space_shuttle.stl");
+  // create shaders and shaderProgram
   VertexShader *vs = new VertexShader();
   vs->from_file("shaders/shader.vert");
   FragmentShader *fs = new FragmentShader();
@@ -30,9 +52,8 @@ int main() {
   ShaderProgram *program = new ShaderProgram();
   program->add_shader(vs);
   program->add_shader(fs);
-  Mesh *mesh = new Mesh();
-  mesh->create(vertices, indices, sizeof(vertices), sizeof(indices));
 
+  // create camera
   glm::mat4 *p_view = program->get_view_ptr();
   const bool *keys_state = main_window->get_keys_state();
   const int *mouse_changes = main_window->get_mouse_changes();
@@ -40,15 +61,20 @@ int main() {
   float angle = 0.0f;
   float inc = 0;
 
+  // render loop
   float delta_time = 0.0f;
   float last_time = 0.0f;
   float now;
+
+
+    brick_texture->use();
   while (!main_window->should_close()) {
     now = glfwGetTime();
     delta_time = now - last_time;
     last_time = now;
     Renderer::clear();
     Renderer::draw(*mesh, *program);
+    // Renderer::draw(*model, *program);
     /* Swap front and back buffers */
     if (angle >= 360)
       angle = 0;
@@ -60,9 +86,10 @@ int main() {
         ->scale(2, 2, 2);
     ;
     camera->updateView(delta_time);
+    // swap buffers
     main_window->swap_buffers();
-    /* Poll for and process events */
-    glfwPollEvents();
+    // poll events
+    main_window->poll_events();
   }
 
   // clean up
@@ -70,6 +97,8 @@ int main() {
   delete fs;
   delete program;
   delete mesh;
+  // delete model;
+  delete camera;
   LOG_DEBUG("quiting..");
   return 0;
 }

@@ -20,5 +20,5 @@ private:
   const bool *keys_state;
     const int *mouse_changes;
   glm::vec3 position, front, up, right, world_up;
-  float yaw, pitch, move_speed, turn_speed;
+  float yaw, pitch, move_speed, turn_speed, roll;
 };
