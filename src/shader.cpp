@@ -48,6 +48,7 @@ Shader* Shader::from_file(const std::string& path){
     //handle errors
     LOG_ERROR("failed to open %s\n",path.c_str());
   }
+    LOG_DEBUG("loaded shader from: %s successfully",path.c_str());
   return this;
 }
 

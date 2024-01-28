@@ -92,6 +92,19 @@ public:
     return glGetUniformLocation(this->m_id, "u_view");
   }
 
+  inline int get_ambient_color() const {
+    return glGetUniformLocation(this->m_id, "u_directional_light.color");
+  }
+  inline int get_ambient_intensity() const {
+    return glGetUniformLocation(this->m_id, "u_directional_light.ambient_intensity");
+  }
+  inline int get_diffuse_direction() const {
+    return glGetUniformLocation(this->m_id, "u_directional_light.direction");
+}
+  inline int get_diffuse_intensity() const {
+    return glGetUniformLocation(this->m_id, "u_directional_light.diffuse_intensity");
+  }
+
   // model manipulations
   ShaderProgram *reset_model();
   ShaderProgram *scale(float x, float y, float z);
@@ -110,4 +123,5 @@ private:
   std::vector<Shader *> m_shaders;
   bool compiled_and_linked;
   glm::mat4 m_model, m_projection, m_view;
+
 };

@@ -38,7 +38,7 @@ clean:
 	rm -rf $(OBJ_DIR) $(TARGET)
 
 run:
-	make clean; make 
+	make;
 	clear;
 	./$(TARGET)
 .PHONY: all clean run

@@ -17,5 +17,6 @@ public:
 
 private:
   void load_mesh(aiMesh *mesh);
+  void load_node(aiNode* node, const aiScene *scene);
   std::vector<Mesh *> m_meshes;
 };

@@ -29,13 +29,16 @@ Mesh *Mesh::create(GLfloat *vertices, unsigned *indices, unsigned n_vertices,
 
   // attribute
   GLCALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                               sizeof(vertices[0]) * 5, 0));
+                               sizeof(vertices[0]) * 8, 0));
   GLCALL(glEnableVertexAttribArray(0));
   // Texture attribute
   GLCALL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
-                               sizeof(vertices[0]) * 5,
+                               sizeof(vertices[0]) * 8,
                                (void *)(sizeof(vertices[0]) * 3)));
   GLCALL(glEnableVertexAttribArray(1));
+  // normals attribute
+  GLCALL(glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,sizeof(vertices[0])*8,(void*)(sizeof(vertices[0])*5)));
+  GLCALL(glEnableVertexAttribArray(2));
 
   // unbinds
   GLCALL(glBindBuffer(GL_ARRAY_BUFFER, 0));         // unbind vbo

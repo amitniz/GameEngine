@@ -61,6 +61,7 @@ int Window::init() {
 
   // create a connection between this Window instance to the glfw window
   glfwSetWindowUserPointer(this->m_window, this);
+  LOG_DEBUG("window initialized successfully");
   return 0;
 }
 

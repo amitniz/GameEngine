@@ -11,7 +11,7 @@ Texture::Texture()
     : m_id(0), m_width(0), m_height(0), m_bit_depth(0), m_file_path(){};
 
 Texture *Texture::load() {
-  stbi_set_flip_vertically_on_load(true);
+  // stbi_set_flip_vertically_on_load(true);
   uint8_t *data = stbi_load(this->m_file_path.c_str(), &this->m_width,
                             &this->m_height, &this->m_bit_depth, 0);
 
@@ -37,6 +37,7 @@ Texture *Texture::load() {
   // free data
   stbi_image_free(data);
 
+  LOG_DEBUG("loaded texture from: %s successfully", this->m_file_path.c_str());
   return this;
 }
 
