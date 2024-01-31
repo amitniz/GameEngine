@@ -27,17 +27,19 @@ Mesh *Mesh::create(GLfloat *vertices, unsigned *indices, unsigned n_vertices,
   GLCALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * n_vertices,
                       vertices, GL_STATIC_DRAW));
 
-  // attribute
+  // positions attribute
   GLCALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
                                sizeof(vertices[0]) * 8, 0));
   GLCALL(glEnableVertexAttribArray(0));
-  // Texture attribute
+  // Textures attribute
   GLCALL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
                                sizeof(vertices[0]) * 8,
                                (void *)(sizeof(vertices[0]) * 3)));
   GLCALL(glEnableVertexAttribArray(1));
   // normals attribute
-  GLCALL(glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,sizeof(vertices[0])*8,(void*)(sizeof(vertices[0])*5)));
+  GLCALL(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+                               sizeof(vertices[0]) * 8,
+                               (void *)(sizeof(vertices[0]) * 5)));
   GLCALL(glEnableVertexAttribArray(2));
 
   // unbinds

@@ -4,7 +4,6 @@
 #include "include/model.h"
 #include "include/renderer.h"
 #include "include/shader.h"
-#include "include/texture.h"
 #include "include/window.h"
 #include <GLFW/glfw3.h>
 #include <assimp/Importer.hpp>
@@ -15,9 +14,6 @@ int main() {
   Window *main_window = new Window(1920, 1080);
   main_window->init();
 
-  // create texture
-  Texture *brick_texture = new Texture("assets/textures/plain.png");
-  brick_texture->load();
 
   // create model
   Model *model = new Model();
@@ -41,7 +37,7 @@ int main() {
   float inc = 0;
 
   // create ambient light
-  Light *light = new Light(glm::vec3(0.4,0.5,0.5),glm::vec3(0.5f,4.0f,-7.0f),1.0f,1.0f);
+  Light *light = new Light(glm::vec3(1.0,1.0,1.0),glm::vec3(0.5f,4.0f,-7.0f),0.3f,0.8f);
   // render loop
   float delta_time = 0.0f;
   float last_time = 0.0f;
@@ -51,7 +47,6 @@ int main() {
   unsigned ambient_intensity_location;
   unsigned diffuse_intensity_location;
   unsigned direction_location;
-  brick_texture->use();
   LOG_DEBUG("render loop..");
   while (!main_window->should_close()) {
     now = glfwGetTime();
@@ -63,7 +58,7 @@ int main() {
     program->set_perspective(45.0f, main_window->get_ratio(), 0.1f, 100.0f);
     program->reset_model()
         ->translate(0.0f, 0.0f, -5.0f)
-        ->scale(0.01, 0.01, 0.01);
+        ->scale(0.01,0.01,0.01)
     ;
     color_location = program->get_ambient_color();
     ambient_intensity_location = program->get_ambient_intensity();

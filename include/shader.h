@@ -58,6 +58,8 @@ public:
 };
 
 // ------------------------------ ShaderProgram -------------------------------
+
+//TODO: ShaderProgram should have a destructor or at least storing memebers by value
 class ShaderProgram {
 public:
   ShaderProgram();

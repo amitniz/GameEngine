@@ -1,6 +1,8 @@
 
 #include "include/model.h"
 #include "include/logging.h"
+#include <assimp/material.h>
+#include <assimp/types.h>
 
 Model *Model::load(const std::string &file_path) {
   Assimp::Importer importer;
@@ -15,17 +17,18 @@ Model *Model::load(const std::string &file_path) {
     return this;
   }
 
-  load_node(scene->mRootNode, scene);
+  load_nodes(scene->mRootNode, scene);
+  load_materials(scene);
   return this;
 }
 
-void Model::load_node(aiNode *node, const aiScene *scene) {
+void Model::load_nodes(aiNode *node, const aiScene *scene) {
   for (int i = 0; i < node->mNumMeshes; i++) {
     load_mesh(scene->mMeshes[node->mMeshes[i]]);
   }
 
   for (int i = 0; i < node->mNumChildren; i++) {
-    load_node(node->mChildren[i], scene);
+    load_nodes(node->mChildren[i], scene);
   }
 }
 void Model::load_mesh(aiMesh *mesh) {
@@ -43,7 +46,8 @@ void Model::load_mesh(aiMesh *mesh) {
       vertices.insert(vertices.end(), {0.0f, 0.0f});
     }
     // normals
-    vertices.insert(vertices.end(),{mesh->mNormals[i].x,mesh->mNormals[i].y,mesh->mNormals[i].z});
+    vertices.insert(vertices.end(), {mesh->mNormals[i].x, mesh->mNormals[i].y,
+                                     mesh->mNormals[i].z});
   }
 
   for (int i = 0; i < mesh->mNumFaces; i++) {
@@ -56,11 +60,47 @@ void Model::load_mesh(aiMesh *mesh) {
   Mesh *n_mesh = new Mesh();
   n_mesh->create(vertices, indices);
   this->m_meshes.push_back(n_mesh);
+    this->m_mesh_2_tex.push_back(mesh->mMaterialIndex);
+}
+
+void Model::load_materials(const aiScene *scene) {
+  m_materials.resize(scene->mNumMaterials);
+  for (int i = 0; i < scene->mNumMaterials; i++) {
+    aiMaterial *material = scene->mMaterials[i];
+    m_materials[i] = nullptr;
+
+    if (material->GetTextureCount(aiTextureType_DIFFUSE)) {
+      aiString path;
+      if (material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
+        int idx = std::string(path.data).rfind("\\");
+        std::string filename = std::string(path.data).substr(idx + 1);
+
+        std::string texPath = std::string("assets/textures/") + filename;
+
+        m_materials[i] = new Material(texPath.c_str());
+
+        if (!m_materials[i]->load_texture()) {
+          delete m_materials[i];
+          m_materials[i] = nullptr;
+        }
+      }
+    }
+    if (m_materials[i] == nullptr){
+            m_materials[i] = new Material();
+            m_materials[i]->load_texture();
+    }
+  }
 }
 
 void Model::render() {
-  for (Mesh *mesh : m_meshes)
-    mesh->render();
+  for (int i = 0; i < m_meshes.size();i++){
+        unsigned texture_idx = m_mesh_2_tex[i];
+        if(texture_idx < m_materials.size() && m_materials[texture_idx]){
+            m_materials[texture_idx]->use();
+        }
+        m_meshes[i]->render();
+    }
+
 }
 
 void Model::clear() {

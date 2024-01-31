@@ -11,13 +11,13 @@ Texture::Texture()
     : m_id(0), m_width(0), m_height(0), m_bit_depth(0), m_file_path(){};
 
 Texture *Texture::load() {
-  // stbi_set_flip_vertically_on_load(true);
+  stbi_set_flip_vertically_on_load(true);
   uint8_t *data = stbi_load(this->m_file_path.c_str(), &this->m_width,
                             &this->m_height, &this->m_bit_depth, 0);
 
   if (!data) {
     LOG_ERROR("failed to load texture from: %s", this->m_file_path.c_str());
-    return this;
+    return nullptr;
   }
 
   GLCALL(glGenTextures(1, &m_id));
@@ -28,7 +28,7 @@ Texture *Texture::load() {
   GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
   GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-  GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA,
+  GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB,
                       GL_UNSIGNED_BYTE, data));
   GLCALL(glGenerateMipmap(GL_TEXTURE_2D));
   // unbind
@@ -36,7 +36,6 @@ Texture *Texture::load() {
 
   // free data
   stbi_image_free(data);
-
   LOG_DEBUG("loaded texture from: %s successfully", this->m_file_path.c_str());
   return this;
 }

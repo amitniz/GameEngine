@@ -88,6 +88,7 @@ void ShaderProgram::use(void){
     }
     GLCALL(glUseProgram(this->m_id));
     update_uniforms();
+    // LOG_DEBUG("shader %d applied",m_id);
 }
 
 ShaderProgram* ShaderProgram::scale(float x, float y, float z) {
