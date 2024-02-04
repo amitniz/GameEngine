@@ -60,7 +60,7 @@ void Model::load_mesh(aiMesh *mesh) {
   Mesh *n_mesh = new Mesh();
   n_mesh->create(vertices, indices);
   this->m_meshes.push_back(n_mesh);
-    this->m_mesh_2_tex.push_back(mesh->mMaterialIndex);
+  this->m_mesh_2_tex.push_back(mesh->mMaterialIndex);
 }
 
 void Model::load_materials(const aiScene *scene) {
@@ -85,22 +85,22 @@ void Model::load_materials(const aiScene *scene) {
         }
       }
     }
-    if (m_materials[i] == nullptr){
-            m_materials[i] = new Material();
-            m_materials[i]->load_texture();
+    if (m_materials[i] == nullptr) {
+      m_materials[i] = new Material();
+      m_materials[i]->load_texture();
     }
   }
 }
 
 void Model::render() {
-  for (int i = 0; i < m_meshes.size();i++){
-        unsigned texture_idx = m_mesh_2_tex[i];
-        if(texture_idx < m_materials.size() && m_materials[texture_idx]){
-            m_materials[texture_idx]->use();
-        }
-        m_meshes[i]->render();
+  // if(m_materials[0]) m_materials[0]->use_shader();
+  for (int i = 0; i < m_meshes.size(); i++) {
+    unsigned texture_idx = m_mesh_2_tex[i];
+    if (texture_idx < m_materials.size() && m_materials[texture_idx]) {
+      m_materials[texture_idx]->use_texture();
     }
-
+    m_meshes[i]->render();
+  }
 }
 
 void Model::clear() {
@@ -112,4 +112,26 @@ Model::~Model() {
   clear();
   for (Mesh *mesh : m_meshes)
     delete mesh;
+}
+
+Model* Model::reset(){
+  if(this->m_materials[0])
+    this->m_materials[0]->get_shader_program()->reset_model();
+  return this;
+}
+Model *Model::translate(float x, float y, float z) {
+  if (this->m_materials[0])
+    this->m_materials[0]->get_shader_program()->translate(x, y, z);
+  return this;
+}
+
+Model *Model::scale(float x, float y, float z) {
+  if (this->m_materials[0])
+    this->m_materials[0]->get_shader_program()->scale(x, y, z);
+  return this;
+}
+Model *Model::rotate(float degree, glm::vec3 rotation_axis) {
+  if (this->m_materials[0])
+    this->m_materials[0]->get_shader_program()->rotate(degree, rotation_axis);
+  return this;
 }

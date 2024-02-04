@@ -3,19 +3,10 @@
 #include "include/logging.h"
 #include <glm/fwd.hpp>
 
-AmbientLight::AmbientLight(float red, float green, float blue, float intensity)
-    : m_color(red, green, blue), m_intensity(intensity) {}
-
-AmbientLight::AmbientLight() : AmbientLight(1.0f, 1.0f, 1.0f, 1.0f) {}
-
-void AmbientLight::use(unsigned color_location, unsigned intensity_location) {
-  GLCALL(glUniform3f(color_location, m_color.x, m_color.y, m_color.z));
-  GLCALL(glUniform1f(intensity_location, m_intensity));
-}
-
 Light::Light()
     : Light(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f), 1.0f,
             1.0f) {}
+
 Light::Light(glm::vec3 color, glm::vec3 direction, float ambient_intensity,
              float diffuse_intensity):m_color(color),m_direction(direction),m_ambient_intensity(ambient_intensity),m_diffuse_intensity(diffuse_intensity) {}
 

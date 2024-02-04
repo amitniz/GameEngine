@@ -2,17 +2,6 @@
 
 #include <glm/glm.hpp>
 
-class AmbientLight {
-public:
-  AmbientLight();
-  AmbientLight(float red, float green, float blue, float intensity);
-  void use(unsigned color_location, unsigned intensity_location);
-  ~AmbientLight() = default;
-
-private:
-  glm::vec3 m_color;
-  float m_intensity;
-};
 
 class Light {
 public:

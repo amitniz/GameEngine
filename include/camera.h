@@ -8,15 +8,15 @@
 
 class Camera {
 public:
-  Camera(glm::mat4 *p_view, const bool *keys_state, const int *mouse_changes);
+  Camera(const bool *keys_state, const int *mouse_changes);
   ~Camera() = default;
 
-  void updateView(float delta_time);
+  void updateView(glm::mat4 *p_view, float delta_time);
+  void update_position(int camera_uniform_id);
 
 private:
   void keyboard_controller(const bool *keys_state, float delta_time);
   void mouse_controller(int x_change, int y_change);
-  glm::mat4 *p_view;
   const bool *keys_state;
     const int *mouse_changes;
   glm::vec3 position, front, up, right, world_up;

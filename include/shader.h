@@ -9,6 +9,7 @@
 
 class Shader {
 public:
+
   ~Shader();
 
   /**
@@ -63,8 +64,13 @@ public:
 class ShaderProgram {
 public:
   ShaderProgram();
+  
+  ShaderProgram* init(); //default shader program
+  ShaderProgram* add_shader(Shader *shader);
 
-  ShaderProgram *add_shader(Shader *shader);
+  ShaderProgram* add_vertex_shader(const std::string &shader_file);
+
+  ShaderProgram* add_fragment_shader(const std::string &shader_file);
 
   /**
    * @brief
@@ -106,7 +112,12 @@ public:
   inline int get_diffuse_intensity() const {
     return glGetUniformLocation(this->m_id, "u_directional_light.diffuse_intensity");
   }
-
+  inline int get_shininess()const {
+    return glGetUniformLocation(this->m_id, "u_directional_light.shininess");
+  }
+  inline int get_camera_position()const {
+    return glGetUniformLocation(this->m_id, "u_camera_position");
+  }
   // model manipulations
   ShaderProgram *reset_model();
   ShaderProgram *scale(float x, float y, float z);

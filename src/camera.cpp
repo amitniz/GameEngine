@@ -53,23 +53,23 @@ void Camera::mouse_controller(int x_change, int y_change) {
   this->front = glm::normalize(front);
 
   // update world up
-  this->world_up.y = cos(glm::radians(this->roll));
-  this->world_up.x = sin(glm::radians(this->roll));
-  this->world_up = glm::normalize(this->world_up);
+  // this->world_up.y = cos(glm::radians(this->roll));
+  // this->world_up.x = sin(glm::radians(this->roll));
+  // this->world_up = glm::normalize(this->world_up);
   // update the relative right and up
   this->right = glm::normalize(glm::cross(this->front, this->world_up));
   this->up = glm::normalize(glm::cross(this->right, this->front));
 }
 
-void Camera::updateView(float delta_time) {
+void Camera::updateView(glm::mat4* p_view, float delta_time) {
   mouse_controller(this->mouse_changes[0], this->mouse_changes[1]);
   keyboard_controller(this->keys_state, delta_time);
-  *this->p_view = glm::lookAt(position, position + front, up);
+  *p_view = glm::lookAt(position, position + front, up);
 }
 
-Camera::Camera(glm::mat4 *p_view, const bool *keys_state,
+Camera::Camera(const bool *keys_state,
                const int mouse_changes[2])
-    : p_view(p_view), keys_state(keys_state), mouse_changes(mouse_changes) {
+    : keys_state(keys_state), mouse_changes(mouse_changes) {
   this->position = glm::vec3(0.0f, 5.0f, 5.0f);
   this->world_up = glm::vec3(0.0f, 1.0f, 0.0f);
   this->front = glm::vec3(0.0f, -5.0f, 1.0f);
@@ -78,4 +78,11 @@ Camera::Camera(glm::mat4 *p_view, const bool *keys_state,
   this->roll = 0.0f;
   this->move_speed = 5.0f;
   this->turn_speed = 0.4f;
+}
+
+void Camera::update_position(int camera_uniform_id){
+  if(camera_uniform_id < 0){
+    LOG_ERROR("%s: invalid id",__func__);
+  }
+  GLCALL(glUniform3f(camera_uniform_id,position.x,position.y,position.z));
 }

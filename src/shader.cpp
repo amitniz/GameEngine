@@ -1,4 +1,5 @@
 #include <fstream>
+#include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "include/shader.h"
 #include "include/logging.h"
@@ -54,8 +55,27 @@ Shader* Shader::from_file(const std::string& path){
 
 // ---------------------------- ShaderProgram ---------------------------------
 
+ShaderProgram* ShaderProgram::init(){
+  this->add_vertex_shader("shaders/shader.vert")
+              ->add_fragment_shader("shaders/shader.frag");
+  return this;
+}
+
+
 ShaderProgram* ShaderProgram::add_shader(Shader* shader){
   this->m_shaders.push_back(shader);
+  return this;
+}
+
+ShaderProgram* ShaderProgram::add_vertex_shader(const std::string &shader_file){
+  Shader *vs = (new VertexShader())->from_file(shader_file);
+  this->m_shaders.push_back(vs);
+  return this;
+}
+
+ShaderProgram* ShaderProgram::add_fragment_shader(const std::string &shader_file){
+  Shader *fs = (new FragmentShader())->from_file(shader_file);
+  this->m_shaders.push_back(fs);
   return this;
 }
 
