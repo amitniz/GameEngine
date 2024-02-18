@@ -15,19 +15,19 @@ public:
 
   int init();
 
-  inline void poll_events() const { glfwPollEvents(); }
-  inline int get_width_buffer() const { return this->m_width_buffer; }
-  inline int get_height_buffer() const { return this->m_height_buffer; }
-  inline float get_ratio() const {
+  inline void pollEvents() const { glfwPollEvents(); }
+  inline int getWidthBuffer() const { return this->m_width_buffer; }
+  inline int getHeightBuffer() const { return this->m_height_buffer; }
+  inline float getRatio() const {
     return (float)((float)this->m_width_buffer / (float)this->m_height_buffer);
   }
 
-  inline bool should_close() const {
+  inline bool shouldClose() const {
     return glfwWindowShouldClose(this->m_window);
   }
-  inline void swap_buffers() const { glfwSwapBuffers(this->m_window); }
-  inline const bool *get_keys_state() const { return this->m_keys; }
-  inline const int *get_mouse_changes() const { return this->mouse_changes; }
+  inline void swapBuffers() const { glfwSwapBuffers(this->m_window); }
+  inline const bool *getKeysState() const { return this->m_keys; }
+  inline const int *getMouseChanges() const { return this->mouse_changes; }
 
 private:
   void set_callbacks();

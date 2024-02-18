@@ -16,12 +16,12 @@ public:
                   indicies.size());
   }
 
-  void render();
-  void clear();
-
   ~Mesh();
+  void render();
+
 
 private:
+  void clear();
   GLuint m_vao, m_vbo, m_ibo;
   GLsizei m_idx_count;
 };

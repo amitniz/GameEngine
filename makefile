@@ -1,12 +1,11 @@
 # Compiler
 CXX = g++
 
-
 # Directories
 HEADERS_DIR = ./include
 SRC_DIR = ./src
 OBJ_DIR = ./build
-LIB_DIR = ./lib
+LIB_DIR = ./lib/linux
 
 # Source/Object files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
@@ -37,8 +36,11 @@ $(OBJ_DIR):
 clean:
 	rm -rf $(OBJ_DIR) $(TARGET)
 
+os:
+	echo $(OS)
+
 run:
 	make;
 	clear;
 	./$(TARGET)
-.PHONY: all clean run
+.PHONY: all clean run os

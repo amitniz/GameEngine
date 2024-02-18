@@ -3,12 +3,10 @@
 #include "shader.h"
 #include "texture.h"
 
-/* Material
- * An object that contains a Texture and a ProgramShader
- *
- * A Material can be applied to a Model.
+/**
+ * Material
+ * An object that contains a Texture and a ProgramShader.
  */
-
 class Material {
 public:
   Material();
@@ -18,17 +16,18 @@ public:
   Material(const std::string &texture_path);
   ~Material();
 
-  ShaderProgram* get_shader_program() const {return m_shader_program; }
+  ShaderProgram* getShaderProgram() const {return m_shader_program; }
 
   /* @brief
    * applies the material to the current used model.
    */
   void use();
-  void use_texture() {if(this->m_texture) m_texture->use();}
-  void use_shader() {if(this->m_shader_program) m_shader_program->use();}
-  Material* set_shininess(float shininess);
-  float get_shininess() const {return m_shininess;}
-  bool load_texture();
+  void useTexture() {if(this->m_texture) m_texture->use();}
+  void useShader() {if(this->m_shader_program) m_shader_program->use();}
+  Material* setTexture(Texture* texture);
+  Material* setShininess(float shininess);
+  float getShininess() const {return m_shininess;}
+  bool loadTexture();
 
 private:
   ShaderProgram *m_shader_program;

@@ -4,7 +4,20 @@
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
 
-void Camera::keyboard_controller(const bool *keys_states, float delta_time) {
+Camera::Camera(const bool *keys_state,
+               const int mouse_changes[2])
+    : keys_state(keys_state), mouse_changes(mouse_changes) {
+  this->position = glm::vec3(0.0f, 20.0f, 20.0f);
+  this->world_up = glm::vec3(0.0f, 1.0f, 0.0f);
+  this->front = glm::vec3(0., 0.,0.);
+  this->pitch = -45.;
+  this->yaw = -90.;
+  this->roll = 0.;
+  this->move_speed = 20.;
+  this->turn_speed = .4;
+}
+
+void Camera::keyboardController(const bool *keys_states, float delta_time) {
 
   // calculate velocity according to deltatime
   float velocity = this->move_speed * delta_time;
@@ -31,7 +44,7 @@ void Camera::keyboard_controller(const bool *keys_states, float delta_time) {
   }
 }
 
-void Camera::mouse_controller(int x_change, int y_change) {
+void Camera::mouseController(int x_change, int y_change) {
   x_change *= this->turn_speed;
   y_change *= this->turn_speed;
 
@@ -62,25 +75,12 @@ void Camera::mouse_controller(int x_change, int y_change) {
 }
 
 void Camera::updateView(glm::mat4* p_view, float delta_time) {
-  mouse_controller(this->mouse_changes[0], this->mouse_changes[1]);
-  keyboard_controller(this->keys_state, delta_time);
+  mouseController(this->mouse_changes[0], this->mouse_changes[1]);
+  keyboardController(this->keys_state, delta_time);
   *p_view = glm::lookAt(position, position + front, up);
 }
 
-Camera::Camera(const bool *keys_state,
-               const int mouse_changes[2])
-    : keys_state(keys_state), mouse_changes(mouse_changes) {
-  this->position = glm::vec3(0.0f, 5.0f, 5.0f);
-  this->world_up = glm::vec3(0.0f, 1.0f, 0.0f);
-  this->front = glm::vec3(0.0f, -5.0f, 1.0f);
-  this->pitch = 0.0f;
-  this->yaw = -90.0f;
-  this->roll = 0.0f;
-  this->move_speed = 5.0f;
-  this->turn_speed = 0.4f;
-}
-
-void Camera::update_position(int camera_uniform_id){
+void Camera::updatePosition(int camera_uniform_id){
   if(camera_uniform_id < 0){
     LOG_ERROR("%s: invalid id",__func__);
   }

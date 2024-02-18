@@ -10,9 +10,9 @@ public:
   Scene() = default;
   ~Scene();
 
-  Scene* add_model(Model *model);
-  Scene* set_camera(Camera *camera);
-  Scene* add_light(Light *light);
+  Scene* addModel(Model *model);
+  Scene* setCamera(Camera *camera);
+  Scene* addLight(Light *light);
   void render(float delta_time);
 private:
   std::vector<Model*> m_models;

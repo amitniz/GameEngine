@@ -17,21 +17,28 @@ Model *Model::load(const std::string &file_path) {
     return this;
   }
 
-  load_nodes(scene->mRootNode, scene);
-  load_materials(scene);
+  loadNodes(scene->mRootNode, scene);
+  loadMaterials(scene);
   return this;
 }
 
-void Model::load_nodes(aiNode *node, const aiScene *scene) {
+Model* Model::setTexture(Texture* texture){
+  if (m_materials[0]){
+    m_materials[0]->setTexture(texture);
+  }
+  return this;
+} 
+
+void Model::loadNodes(aiNode *node, const aiScene *scene) {
   for (int i = 0; i < node->mNumMeshes; i++) {
-    load_mesh(scene->mMeshes[node->mMeshes[i]]);
+    loadMesh(scene->mMeshes[node->mMeshes[i]]);
   }
 
   for (int i = 0; i < node->mNumChildren; i++) {
-    load_nodes(node->mChildren[i], scene);
+    loadNodes(node->mChildren[i], scene);
   }
 }
-void Model::load_mesh(aiMesh *mesh) {
+void Model::loadMesh(aiMesh *mesh) {
   std::vector<float> vertices;
   std::vector<unsigned> indices;
   for (int i = 0; i < mesh->mNumVertices; i++) {
@@ -63,7 +70,7 @@ void Model::load_mesh(aiMesh *mesh) {
   this->m_mesh_2_tex.push_back(mesh->mMaterialIndex);
 }
 
-void Model::load_materials(const aiScene *scene) {
+void Model::loadMaterials(const aiScene *scene) {
   m_materials.resize(scene->mNumMaterials);
   for (int i = 0; i < scene->mNumMaterials; i++) {
     aiMaterial *material = scene->mMaterials[i];
@@ -79,7 +86,7 @@ void Model::load_materials(const aiScene *scene) {
 
         m_materials[i] = new Material(texPath.c_str());
 
-        if (!m_materials[i]->load_texture()) {
+        if (!m_materials[i]->loadTexture()) {
           delete m_materials[i];
           m_materials[i] = nullptr;
         }
@@ -87,7 +94,7 @@ void Model::load_materials(const aiScene *scene) {
     }
     if (m_materials[i] == nullptr) {
       m_materials[i] = new Material();
-      m_materials[i]->load_texture();
+      m_materials[i]->loadTexture();
     }
   }
 }
@@ -97,41 +104,37 @@ void Model::render() {
   for (int i = 0; i < m_meshes.size(); i++) {
     unsigned texture_idx = m_mesh_2_tex[i];
     if (texture_idx < m_materials.size() && m_materials[texture_idx]) {
-      m_materials[texture_idx]->use_texture();
+      m_materials[texture_idx]->useTexture();
     }
     m_meshes[i]->render();
   }
 }
 
-void Model::clear() {
-  for (Mesh *mesh : m_meshes)
-    mesh->clear();
-}
-
 Model::~Model() {
-  clear();
   for (Mesh *mesh : m_meshes)
     delete mesh;
+  for (Material* material: m_materials)
+    delete material;
 }
 
 Model* Model::reset(){
   if(this->m_materials[0])
-    this->m_materials[0]->get_shader_program()->reset_model();
+    this->m_materials[0]->getShaderProgram()->resetModel();
   return this;
 }
 Model *Model::translate(float x, float y, float z) {
   if (this->m_materials[0])
-    this->m_materials[0]->get_shader_program()->translate(x, y, z);
+    this->m_materials[0]->getShaderProgram()->translate(x, y, z);
   return this;
 }
 
 Model *Model::scale(float x, float y, float z) {
   if (this->m_materials[0])
-    this->m_materials[0]->get_shader_program()->scale(x, y, z);
+    this->m_materials[0]->getShaderProgram()->scale(x, y, z);
   return this;
 }
 Model *Model::rotate(float degree, glm::vec3 rotation_axis) {
   if (this->m_materials[0])
-    this->m_materials[0]->get_shader_program()->rotate(degree, rotation_axis);
+    this->m_materials[0]->getShaderProgram()->rotate(degree, rotation_axis);
   return this;
 }

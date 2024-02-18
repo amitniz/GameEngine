@@ -3,7 +3,9 @@
 #include <GL/glew.h>
 #include <glm/mat4x4.hpp>
 #include <iostream>
+#include <string>
 #include <vector>
+#include <map>
 
 // --------------------------------- Shader -----------------------------------
 
@@ -18,7 +20,7 @@ public:
    * @param[in] path to shader file
    * @return a pointer to the instance
    */
-  Shader *from_file(const std::string &path);
+  Shader *fromFile(const std::string &path);
 
   /**
    * @brief
@@ -66,11 +68,11 @@ public:
   ShaderProgram();
   
   ShaderProgram* init(); //default shader program
-  ShaderProgram* add_shader(Shader *shader);
+  ShaderProgram* addShader(Shader *shader);
 
-  ShaderProgram* add_vertex_shader(const std::string &shader_file);
+  ShaderProgram* addVertexShader(const std::string &shader_file);
 
-  ShaderProgram* add_fragment_shader(const std::string &shader_file);
+  ShaderProgram* addFragmentShader(const std::string &shader_file);
 
   /**
    * @brief
@@ -87,54 +89,34 @@ public:
 
   /**
    * @brief
-   * getter to the model uniform
-   * @return the model uniform
+   * gets a uniform location
+   * @return the uniform location
    */
-  inline int get_model() const {
-    return glGetUniformLocation(this->m_id, "u_model");
-  }
-  inline int get_projection() const {
-    return glGetUniformLocation(this->m_id, "u_projection");
-  }
-  inline int get_view() const {
-    return glGetUniformLocation(this->m_id, "u_view");
+  inline int getUniformLocation(const std::string& uniform){
+    return glGetUniformLocation(this->m_id, uniform.c_str());
   }
 
-  inline int get_ambient_color() const {
-    return glGetUniformLocation(this->m_id, "u_directional_light.color");
-  }
-  inline int get_ambient_intensity() const {
-    return glGetUniformLocation(this->m_id, "u_directional_light.ambient_intensity");
-  }
-  inline int get_diffuse_direction() const {
-    return glGetUniformLocation(this->m_id, "u_directional_light.direction");
-}
-  inline int get_diffuse_intensity() const {
-    return glGetUniformLocation(this->m_id, "u_directional_light.diffuse_intensity");
-  }
-  inline int get_shininess()const {
-    return glGetUniformLocation(this->m_id, "u_directional_light.shininess");
-  }
-  inline int get_camera_position()const {
-    return glGetUniformLocation(this->m_id, "u_camera_position");
+  inline const std::map<std::string,int>* getUniforms() const{
+    return &m_uniforms;
   }
   // model manipulations
-  ShaderProgram *reset_model();
+  ShaderProgram *resetModel();
   ShaderProgram *scale(float x, float y, float z);
   ShaderProgram *translate(float x, float y, float z);
   ShaderProgram *rotate(float degree, glm::vec3 axis);
 
-    inline glm::mat4* get_view_ptr() {return &m_view;}
-  void set_perspective(float field_of_view_y, float screen_ratio,
+    inline glm::mat4* getViewPtr() {return &m_view;}
+  void setPerspective(float field_of_view_y, float screen_ratio,
                        float near_view, float far_view);
 
 private:
-  ShaderProgram *link_shaders(void);
-  ShaderProgram *compile_shaders(void);
+  void link_shaders(void);
+  void compile_shaders(void);
   void update_uniforms() const;
+  void setup_uniforms_map();
   unsigned int m_id;
   std::vector<Shader *> m_shaders;
-  bool compiled_and_linked;
+  bool m_compiled_and_linked;
   glm::mat4 m_model, m_projection, m_view;
-
+  std::map<std::string,int> m_uniforms;
 };

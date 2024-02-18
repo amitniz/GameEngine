@@ -15,9 +15,15 @@ Material::Material(const std::string &texture_path,
                    const std::string &fragment_shader_path) {
 
   m_texture = new Texture(texture_path);
-  m_shader_program->add_vertex_shader(vertex_shader_path)
-                  ->add_fragment_shader(fragment_shader_path);
+  m_shader_program->addVertexShader(vertex_shader_path)
+                  ->addFragmentShader(fragment_shader_path);
   m_shininess = 0.5f;
+}
+
+Material* Material::setTexture(Texture* texture){
+  if(m_texture) delete m_texture;
+  m_texture = texture;
+  return this;
 }
 
 void Material::use() {
@@ -27,17 +33,17 @@ void Material::use() {
     m_shader_program->use();
 }
 
-bool Material::load_texture() {
+bool Material::loadTexture() {
   if (m_texture)
     return m_texture->load();
   return false;
 }
 
-Material* Material::set_shininess(float shininess){
+Material* Material::setShininess(float shininess){
   if(shininess >= 0.0f && shininess <= 1.0f){
     m_shininess = shininess;
     
-    unsigned shininess_id = m_shader_program->get_shininess();
+    unsigned shininess_id = m_shader_program->getUniformLocation("u_material.shininess");
     GLCALL(glUniform1f(shininess_id,shininess));
   }
 
