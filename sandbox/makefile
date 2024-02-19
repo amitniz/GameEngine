@@ -1,6 +1,6 @@
 # Compiler
 CXX = g++
-ENGINE_SO = $(addprefix $(CURDIR)/,"../engine/libOdysseyEngine.so")
+ENGINE_SO = $(addprefix $(CURDIR)/,"../engine/build/libOdysseyEngine.so")
 
 # Directories
 SRC_DIR = ./
@@ -10,11 +10,11 @@ OBJ_DIR = ./build
 TARGET = sandbox
 
 # Source/Object files
-SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+SRC_FILES = sandbox.cpp
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
 # Compiler flags
-CXX_FLAGS = -Wall -Wextra -I$(CURDIR) -std=c++17 -lGL -lglfw -lGLEW -lassimp -Wl,-rpath,'$ORIGIN' $(ENGINE_SO)
+CXX_FLAGS = -Wall -Wextra -I$(CURDIR)/../engine -std=c++17 -lGL -lglfw -lGLEW -lassimp $(ENGINE_SO) -Wl,-rpath="../engine/build/"
 
 # Main rule
 all: $(TARGET)

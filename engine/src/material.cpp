@@ -1,3 +1,4 @@
+#include <nlohmann/json.hpp>
 #include "include/material.h"
 #include "include/shader.h"
 #include "include/texture.h"
@@ -20,6 +21,9 @@ Material::Material(const std::string &texture_path,
     m_shader_program->addVertexShader(vertex_shader_path)
         ->addFragmentShader(fragment_shader_path);
     m_shininess = 0.5f;
+    m_ka =0.5f;
+    m_kd =0.5f;
+    m_ks =0.5f;
 }
 
 Material* Material::setTexture(Texture* texture){

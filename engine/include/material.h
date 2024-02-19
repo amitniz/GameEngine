@@ -21,6 +21,7 @@ public:
 
     /* @brief
    * applies the material to the current used model.
+   * uses texture + shader
    */
     void use();
     void useTexture() {if(this->m_texture) m_texture->use();}
@@ -34,5 +35,8 @@ private:
     ShaderProgram *m_shader_program;
     Texture *m_texture;
     float m_shininess;
+    float m_ka;
+    float m_kd;
+    float m_ks;
 };
 };

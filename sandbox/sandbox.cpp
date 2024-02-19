@@ -1,4 +1,4 @@
-#include "../engine/OdysseyEngine.h"
+#include "OdysseyEngine.h"
 
 class Sandbox: public Odyssey::GameEngine{
 public:
