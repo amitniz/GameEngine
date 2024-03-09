@@ -8,7 +8,7 @@ namespace Odyssey{
 class Mesh {
 
 public:
-    Mesh();
+    Mesh() = default;
     Mesh *create(float *verticies, unsigned *indices, unsigned n_verticies,
                  unsigned n_indices);
 
@@ -17,14 +17,12 @@ public:
         return create(verticies.data(), indicies.data(), verticies.size(),
                       indicies.size());
     }
-
-    ~Mesh();
-    void render();
-
-
+    ~Mesh() = default;
 private:
-    void clear();
-    GLuint m_vao, m_vbo, m_ibo;
-    GLsizei m_idx_count;
+    friend class Renderer;
+    unsigned m_vao, m_vbo, m_ibo, m_indices_count
+    , m_vertices_count;
+    float* m_vertices;
+    unsigned* m_indices;
 };
 };

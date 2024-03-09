@@ -2,8 +2,33 @@
 #include "include/logging.h"
 #include <assimp/material.h>
 #include <assimp/types.h>
+#include <glm/gtc/type_ptr.hpp>
+#include "nlohmann/json.hpp"
 
 using namespace Odyssey;
+
+#define TO_RADIANS(x) (float)(x * 3.14159265f / 180.0)
+
+Model *Model::loadFromJson(const std::string &json_string) {
+    TODO("errors check");
+    nlohmann::json j = nlohmann::json::parse(json_string);
+    std:: string path = j["path"];
+    Model* model = (new Model())->load(path);
+    if(!j["position"].is_null()){
+        float x = j["position"]["x"];
+        float y = j["position"]["y"];
+        float z = j["position"]["z"];
+        model->translate(x,y,z);
+    }
+    if(!j["scale"].is_null()){
+        float x = j["scale"]["x"];
+        float y = j["scale"]["y"];
+        float z = j["scale"]["z"];
+        model->scale(x,y,z);
+    }
+    TODO("add rotate");
+    return model;
+}
 
 Model *Model::load(const std::string &file_path) {
     Assimp::Importer importer;
@@ -23,12 +48,29 @@ Model *Model::load(const std::string &file_path) {
     return this;
 }
 
-Model* Model::setTexture(Texture* texture){
-    if (m_materials[0]){
-        m_materials[0]->setTexture(texture);
-    }
+
+Model* Model::rotate(glm::vec3 axis, float degree){
+    this->m_model_matrix = glm::rotate(this->m_model_matrix, TO_RADIANS(degree), axis);
     return this;
-} 
+}
+
+
+Model* Model::scale(float x, float y, float z){
+    return scale(glm::vec3(x,y,z));
+}
+
+Model* Model::scale(glm::vec3 xyz){
+    this->m_model_matrix = glm::scale(this->m_model_matrix, xyz);
+    return this;
+}
+
+Model* Model::translate(float x, float y, float z){
+    return translate(glm::vec3(x,y,z));
+}
+Model* Model::translate(glm::vec3 xyz){
+    this->m_model_matrix = glm::translate(this->m_model_matrix, xyz);
+    return this;
+}
 
 void Model::loadNodes(aiNode *node, const aiScene *scene) {
     for (int i = 0; i < node->mNumMeshes; i++) {
@@ -83,31 +125,11 @@ void Model::loadMaterials(const aiScene *scene) {
                 int idx = std::string(path.data).rfind("\\");
                 std::string filename = std::string(path.data).substr(idx + 1);
 
-                std::string texPath = std::string("assets/textures/") + filename;
+                std::string texture_path = std::string("assets/textures/") + filename;
 
-                m_materials[i] = new Material(texPath.c_str());
-
-                if (!m_materials[i]->loadTexture()) {
-                    delete m_materials[i];
-                    m_materials[i] = nullptr;
-                }
+                m_materials[i] = (new Material())->addTexture(texture_path);
             }
         }
-        if (m_materials[i] == nullptr) {
-            m_materials[i] = new Material();
-            m_materials[i]->loadTexture();
-        }
-    }
-}
-
-void Model::render() {
-    // if(m_materials[0]) m_materials[0]->use_shader();
-    for (int i = 0; i < m_meshes.size(); i++) {
-        unsigned texture_idx = m_mesh_2_tex[i];
-        if (texture_idx < m_materials.size() && m_materials[texture_idx]) {
-            m_materials[texture_idx]->useTexture();
-        }
-        m_meshes[i]->render();
     }
 }
 
@@ -118,24 +140,3 @@ Model::~Model() {
     delete material;
 }
 
-Model* Model::reset(){
-    if(this->m_materials[0])
-        this->m_materials[0]->getShaderProgram()->resetModel();
-    return this;
-}
-Model *Model::translate(float x, float y, float z) {
-    if (this->m_materials[0])
-        this->m_materials[0]->getShaderProgram()->translate(x, y, z);
-    return this;
-}
-
-Model *Model::scale(float x, float y, float z) {
-    if (this->m_materials[0])
-        this->m_materials[0]->getShaderProgram()->scale(x, y, z);
-    return this;
-}
-Model *Model::rotate(float degree, glm::vec3 rotation_axis) {
-    if (this->m_materials[0])
-        this->m_materials[0]->getShaderProgram()->rotate(degree, rotation_axis);
-    return this;
-}

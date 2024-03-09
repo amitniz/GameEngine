@@ -2,8 +2,17 @@
 #include "GL/glew.h"
 #include "include/logging.h"
 #include <glm/fwd.hpp>
+#include "nlohmann/json.hpp"
 
 using namespace Odyssey;
+
+Light *Light::loadFromJson(const std::string &json_string) {
+    TODO("errors check");
+    UNFINISHED;
+    nlohmann::json j = nlohmann::json::parse(json_string);
+    Light* light = new DirectionalLight();
+    return light;
+}
 
 Light::Light() : Light(glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 1.0f) {}
 

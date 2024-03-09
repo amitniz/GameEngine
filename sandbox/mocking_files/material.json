@@ -1,0 +1,14 @@
+{
+    "material":{
+        "name":"example_material",
+        "texture":"../assets/textures/plain.png",
+        "shaders":{
+            "vertex": "../shaders/shader.vert",
+            "fragment": "../shaders/shader.frag"
+        },
+        "Ka": 0.5,
+        "Kd": 0.5,
+        "Ks":0.5,
+        "shininess":0.5
+    }
+}

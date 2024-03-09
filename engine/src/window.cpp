@@ -1,4 +1,5 @@
 #include "include/window.h"
+#include "include/events.h"
 #include "include/logging.h"
 
 #define DEFAULT_WIDTH 800
@@ -8,8 +9,7 @@ using namespace Odyssey;
 
 Window::Window() : Window(DEFAULT_WIDTH, DEFAULT_HEIGHT) {} // default Window
 Window::Window(GLint width, GLint height)
-    : m_width(width), m_height(height), m_keys{false}, mouse_changes{0},
-    current_coords{0}, last_coords{0}, mouse_init(false) {}
+    : m_width(width), m_height(height){}
 
 int Window::init() {
     if (!glfwInit()) {
@@ -74,7 +74,8 @@ Window::~Window() {
 void Window::keyboard_events_handler(GLFWwindow *window, int key, int code,
                                      int action, int mode) {
     // get instance
-    Window *win = (Window *)(glfwGetWindowUserPointer(window));
+    TODO("get rid of the window pointer");
+    // Window *win = (Window *)(glfwGetWindowUserPointer(window));
 
     // set keys behavior
     if ((key == GLFW_KEY_ESCAPE) && action == GLFW_PRESS) {
@@ -82,28 +83,29 @@ void Window::keyboard_events_handler(GLFWwindow *window, int key, int code,
     }
 
     if (key >= 0 && key <= MAX_KEYS) {
-        win->m_keys[key] = action == GLFW_RELEASE ? false : true;
+        bool* m_keys = Events::getInstance()->m_keys;
+        m_keys[key] = action == GLFW_RELEASE ? false : true;
     }
 }
 
 void Window::mouse_events_handler(GLFWwindow *window, double x_pos,
                                   double y_pos) {
     // get instance
-    Window *win = (Window *)(glfwGetWindowUserPointer(window));
+    Events *events = Events::getInstance();
     // update mouse tracking
-    if (!win->mouse_init) {
-        win->mouse_init = true;
+    if (!events->mouse_init) {
+        events->mouse_init = true;
         return;
     }
 
-    win->last_coords[0] = win->current_coords[0];
-    win->last_coords[1] = win->current_coords[1];
-    win->current_coords[0] = (int)x_pos;
-    win->current_coords[1] = (int)y_pos;
+    events->last_coords[0] = events->current_coords[0];
+    events->last_coords[1] = events->current_coords[1];
+    events->current_coords[0] = (int)x_pos;
+    events->current_coords[1] = (int)y_pos;
 
-    if (win->last_coords[0] || win->last_coords[1]) { // prevent the first change
-        win->mouse_changes[0] = win->current_coords[0] - win->last_coords[0];
-        win->mouse_changes[1] = win->current_coords[1] - win->last_coords[1];
+    if (events->last_coords[0] || events->last_coords[1]) { // prevent the first change
+        events->mouse_changes[0] = events->current_coords[0] - events->last_coords[0];
+        events->mouse_changes[1] = events->current_coords[1] - events->last_coords[1];
     }
 }
 

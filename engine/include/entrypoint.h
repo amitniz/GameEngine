@@ -7,8 +7,11 @@ extern Odyssey::GameEngine* Odyssey::createApp();
 int main(int argc, char* argv[]){
 
     auto app = Odyssey::createApp();
-    app->run();
+    app->setup();
+    app->loop();
     delete app;
 }
 
 #endif
+
+

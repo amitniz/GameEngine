@@ -10,30 +10,20 @@
 namespace Odyssey{
 class Material {
 public:
-    Material();
-    Material(const std::string &texture_path,
-             const std::string &vertex_shader_path,
-             const std::string &fragment_shader_path);
-    Material(const std::string &texture_path);
-    ~Material();
+    Material() = default;
+    ~Material() = default;
 
-    ShaderProgram* getShaderProgram() const {return m_shader_program; }
+    inline Material* addTexture(const std::string &texture_file){this->m_texture_file = texture_file; return this;}
+    static Material* load(const std::string &json_file);
+    inline float getShininess() const {return m_shininess;}
+    inline const std::string & getTextureFile() const {return m_texture_file;}
+    inline unsigned getId() const {return m_id;}
 
-    /* @brief
-   * applies the material to the current used model.
-   * uses texture + shader
-   */
-    void use();
-    void useTexture() {if(this->m_texture) m_texture->use();}
-    void useShader() {if(this->m_shader_program) m_shader_program->use();}
-    Material* setTexture(Texture* texture);
-    Material* setShininess(float shininess);
-    float getShininess() const {return m_shininess;}
-    bool loadTexture();
-
+protected:
+    unsigned m_id; // texture id 
+    friend class Renderer;
 private:
-    ShaderProgram *m_shader_program;
-    Texture *m_texture;
+    std::string m_texture_file;
     float m_shininess;
     float m_ka;
     float m_kd;

@@ -22,16 +22,20 @@ namespace Odyssey{
   ASSERT(log_call(#x, __FILE__,__LINE__))
 
 
-#define LOG(level,...)  printf("[%s]::[%s]: ",level,TIME);\
+#define LOG(level,...)  printf("[%s]::[%s]: ",TIME,level);\
                         printf(__VA_ARGS__);\
                         printf("\n")
+
 
 #define LOG_DEBUG(...)  LOG("DEBUG",__VA_ARGS__)
 #define LOG_INFO(...) LOG("INFO",__VA_ARGS__)
 #define LOG_WARNING(...) LOG("WARNING",__VA_ARGS__)
 #define LOG_ERROR(...) LOG("ERROR",__VA_ARGS__)
 #define LOG_CRITICAL(...) LOG("CRITICAL",__VA_ARGS__)
-
+#define UNFINISHED LOG("UNFINISHED", "called unfinished function: %s", __func__)
+#define TODO(...) printf("[TODO]::[%s]: ",TIME);\
+                  printf(__VA_ARGS__);\
+                  printf(": %s\n",__func__);
 void clear_error();
 bool log_call(const char* function, const char* file, int line);
 };

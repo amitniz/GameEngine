@@ -17,6 +17,7 @@ public:
     virtual ~Light() = default;
 
     virtual void use(const map<string,int>& shader_uniforms) = 0 ;
+    static Light *loadFromJson(const std::string &json_string);
 
     Light *setColor(glm::vec3 color);
     Light *setAmbientLight(float intensity);

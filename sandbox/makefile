@@ -14,7 +14,7 @@ SRC_FILES = sandbox.cpp
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
 # Compiler flags
-CXX_FLAGS = -Wall -Wextra -I$(CURDIR)/../engine -std=c++17 -lGL -lglfw -lGLEW -lassimp $(ENGINE_SO) -Wl,-rpath="../engine/build/"
+CXX_FLAGS = -Wall -Wextra -I$(CURDIR)/../engine -std=c++17 -lGL $(ENGINE_SO) -Wl,-rpath="../engine/build/"
 
 # Main rule
 all: $(TARGET)

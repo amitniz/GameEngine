@@ -28,8 +28,6 @@ public:
         return glfwWindowShouldClose(this->m_window);
     }
     inline void swapBuffers() const { glfwSwapBuffers(this->m_window); }
-    inline const bool *getKeysState() const { return this->m_keys; }
-    inline const int *getMouseChanges() const { return this->mouse_changes; }
 
 private:
     void set_callbacks();
@@ -41,12 +39,5 @@ private:
     GLFWwindow *m_window;
     int m_width, m_height;
     int m_width_buffer, m_height_buffer;
-    // keyboard
-    bool m_keys[MAX_KEYS];
-    // mouse
-    int current_coords[2];
-    int mouse_changes[2];
-    int last_coords[2];
-    bool mouse_init; // prevents inital read before user moved the mouse
 };
 };
